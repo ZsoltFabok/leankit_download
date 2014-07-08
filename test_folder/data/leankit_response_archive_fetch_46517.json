@@ -1,0 +1,40 @@
+[
+  [
+    {
+      "Lane": {
+        "Id": 10619,
+        "Description": "",
+        "Index": 0,
+        "Active": true,
+        "Title": "Archive",
+        "CardLimit": 0,
+        "ClassType": 2,
+        "Type": 1,
+        "ActivityId": null,
+        "ActivityName": "",
+        "CardContextId": 0,
+        "Width": 7,
+        "ParentLaneId": 0,
+        "Cards": [
+
+        ],
+        "Orientation": 0,
+        "TaskBoardId": null,
+        "ChildLaneIds": [
+
+        ],
+        "SiblingLaneIds": [
+
+        ],
+        "IsDrillthroughDoneLane": false,
+        "IsDefaultDropLane": false,
+        "LaneState": "lane"
+      },
+      "ParentLane": null,
+      "ChildLanes": [
+
+      ],
+      "Dom": null
+    }
+  ]
+]

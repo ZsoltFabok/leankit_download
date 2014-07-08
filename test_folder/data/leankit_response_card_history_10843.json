@@ -1,0 +1,20 @@
+[
+  [
+    {
+      "CardId": 10843,
+      "CardTitle": "10843",
+      "ToLaneId": 104241096,
+      "ToLaneTitle": "Archive",
+      "Type": "CardCreationEventDTO",
+      "UserName": null,
+      "UserFullName": null,
+      "GravatarLink": null,
+      "DateTime": "2014/02/13 at 03:29:20 PM",
+      "TimeDifference": null,
+      "LastDate": null,
+      "OverrideType": null,
+      "TaskboardContainingCardTitle": null,
+      "TaskboardContainingCardId": null
+    }
+  ]
+]
