@@ -16,11 +16,12 @@ Gem::Specification.new do |s|
   s.homepage    = ''
   s.license     = 'BSD'
 
-  # s.files         = `git ls-files`.split("\n").reject {|path| path =~ /\.gitignore$/ || path =~ /file$/ }
-  # s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  # s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files         = `git ls-files`.split("\n").reject {|path| path =~ /\.gitignore$/ || path =~ /file$/ }
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_development_dependency('rspec'  , '~> 3.0')
-  s.add_development_dependency('rake'   , '~> 10.3')
+  s.add_development_dependency('rspec', '~> 3.0')
+  s.add_development_dependency('rake', '~> 10.3')
+  s.add_development_dependency('leankitkanban', '~> 0.1')
 end
