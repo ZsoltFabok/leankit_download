@@ -5,7 +5,18 @@ module LeankitDownload
       @files_and_json = files_and_json
     end
 
-    def download(destination, email, password, account, board_name)
+    def download(boards_json, destination)
+      content = @files_and_json.from_file(boards_json)
+      email = content["leankit"]["email"]
+      password = content["leankit"]["password"]
+      account = content["leankit"]["account"]
+
+      content["boards"].each do |board|
+        download_board(destination, email, password, account, board[0])
+      end
+    end
+
+    def download_board(destination, email, password, account, board_name)
       login(email, password, account)
       board_id = get_board_id(destination, board_name)
       get_card_ids(board_id).each do |card_id, last_activity|
@@ -22,11 +33,17 @@ module LeankitDownload
       end
     end
 
+    def self.create
+      new(Common::FilesAndJson.new)
+    end
+
     private
     def login(email, password, account)
-      LeanKitKanban::Config.email    = email
-      LeanKitKanban::Config.password = password
-      LeanKitKanban::Config.account  = account
+      if LeanKitKanban::Config.email == nil
+        LeanKitKanban::Config.email    = email
+        LeanKitKanban::Config.password = password
+        LeanKitKanban::Config.account  = account
+      end
     end
 
     def get_board_id(destination, board_name)

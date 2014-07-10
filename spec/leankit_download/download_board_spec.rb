@@ -25,7 +25,7 @@ describe LeankitDownload::DownloadBoard do
       expect(LeanKitKanban::Archive).to receive(:fetch).with(@board_id).and_return(@archive)
       expect(@files_and_json).to receive(:to_file).with(@board_all, "#{@location}/all_boards.json")
 
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
 
       expect(LeanKitKanban::Config.email).to equal(@email)
       expect(LeanKitKanban::Config.password).to equal(@password)
@@ -45,7 +45,7 @@ describe LeankitDownload::DownloadBoard do
       expect(@files_and_json).to receive(:to_file).with(@card_info, "#{@location}/#{@board_name}/#{@card_id}.json")
       expect(LeanKitKanban::Card).to receive(:history).with(@board_id, @card_id).and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
     end
 
     it "doesn't downloads the history of a new card because there are no changes regarding that card" do
@@ -58,7 +58,7 @@ describe LeankitDownload::DownloadBoard do
       expect(File).to receive(:exists?).with("#{@location}/#{@board_name}/#{@card_id}.json").and_return(true)
       expect(@files_and_json).to receive(:from_file).with("#{@location}/#{@board_name}/#{@card_id}_history.json").and_return(@card_history)
       expect(@files_and_json).not_to receive(:to_file)
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
     end
 
     it "downloads the history of a new card because there are changes regarding that card" do
@@ -72,7 +72,7 @@ describe LeankitDownload::DownloadBoard do
       expect(File).to receive(:exists?).with("#{@location}/#{@board_name}/#{@card_id}.json").and_return(true)
       expect(@files_and_json).to receive(:from_file).with("#{@location}/#{@board_name}/#{@card_id}_history.json").and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
     end
 
     it "downloads the cards from the backlog as well" do
@@ -89,7 +89,7 @@ describe LeankitDownload::DownloadBoard do
       expect(@files_and_json).to receive(:to_file).with(@card_info, "#{@location}/#{@board_name}/#{@card_id}.json")
       expect(LeanKitKanban::Card).to receive(:history).with(@board_id, @card_id).and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
     end
 
     it "downloads the cards from the archive" do
@@ -106,7 +106,7 @@ describe LeankitDownload::DownloadBoard do
       expect(@files_and_json).to receive(:to_file).with(@card_info, "#{@location}/#{@board_name}/#{@card_id}.json")
       expect(LeanKitKanban::Card).to receive(:history).with(@board_id, @card_id).and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
     end
 
     it "downloads the cards from the archive from the archive child lanes" do
@@ -123,7 +123,7 @@ describe LeankitDownload::DownloadBoard do
       expect(@files_and_json).to receive(:to_file).with(@card_info, "#{@location}/#{@board_name}/#{@card_id}.json")
       expect(LeanKitKanban::Card).to receive(:history).with(@board_id, @card_id).and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      @download_board.download(@location, @email, @password, @account, @board_name)
+      @download_board.download_board(@location, @email, @password, @account, @board_name)
     end
   end
 

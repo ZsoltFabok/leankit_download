@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
 require "leankit_download"
-LeankitDownload::Runner.run
+LeankitDownload::Cli.run

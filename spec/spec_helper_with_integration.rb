@@ -92,7 +92,7 @@ def add_board_column_mapping_to_config_file(board_name, mapping)
 end
 
 def run_app
-	LeankitDownload::Runner.run
+	LeankitDownload::Cli.run(["boards.json", "leankit_dump"])
 end
 
 def read_file(file_name)
