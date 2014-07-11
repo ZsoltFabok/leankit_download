@@ -19,6 +19,7 @@ module LeankitDownload
     def download_board(destination, email, password, account, board_name)
       login(email, password, account)
       board_id = get_board_id(destination, board_name)
+      board_locations = []
       get_card_ids(board_id).each do |card_id, last_activity|
         if !File.exists?(card_info_filename(destination, board_name, card_id))
           dump_card_info(destination, board_name, board_id, card_id)
@@ -30,7 +31,9 @@ module LeankitDownload
             dump_card_history(destination, board_name, board_id, card_id)
           end
         end
+        board_locations << File.join(destination, board_name)
       end
+      board_locations
     end
 
     def self.create

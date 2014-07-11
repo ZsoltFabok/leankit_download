@@ -45,7 +45,9 @@ describe LeankitDownload::DownloadBoard do
       expect(@files_and_json).to receive(:to_file).with(@card_info, "#{@location}/#{@board_name}/#{@card_id}.json")
       expect(LeanKitKanban::Card).to receive(:history).with(@board_id, @card_id).and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      @download_board.download_board(@location, @email, @password, @account, @board_name)
+      board_locations = @download_board.download_board(@location, @email, @password, @account, @board_name)
+
+      expect(board_locations).to eq ["#{@location}/#{@board_name}"]
     end
 
     it "doesn't downloads the history of a new card because there are no changes regarding that card" do
