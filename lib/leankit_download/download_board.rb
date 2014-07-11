@@ -5,21 +5,29 @@ module LeankitDownload
       @files_and_json = files_and_json
     end
 
-    def download(boards_json, destination)
+    def download(boards_json, destination, dry_run=false)
       content = @files_and_json.from_file(boards_json)
       email = content["leankit"]["email"]
       password = content["leankit"]["password"]
       account = content["leankit"]["account"]
 
+      board_locations = []
       content["boards"].each do |board|
-        download_board(destination, email, password, account, board[0])
+        if !dry_run
+          board_locations << download_board(destination, email, password, account, board[0])
+        else
+          board_location = File.join(destination, board[0])
+          if File.exist?(board_location)
+            board_locations << board_location
+          end
+        end
       end
+      board_locations
     end
 
     def download_board(destination, email, password, account, board_name)
       login(email, password, account)
       board_id = get_board_id(destination, board_name)
-      board_locations = []
       get_card_ids(board_id).each do |card_id, last_activity|
         if !File.exists?(card_info_filename(destination, board_name, card_id))
           dump_card_info(destination, board_name, board_id, card_id)
@@ -31,9 +39,8 @@ module LeankitDownload
             dump_card_history(destination, board_name, board_id, card_id)
           end
         end
-        board_locations << File.join(destination, board_name)
       end
-      board_locations
+      File.join(destination, board_name)
     end
 
     def self.create

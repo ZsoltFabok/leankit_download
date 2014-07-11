@@ -45,9 +45,10 @@ describe LeankitDownload::DownloadBoard do
       expect(@files_and_json).to receive(:to_file).with(@card_info, "#{@location}/#{@board_name}/#{@card_id}.json")
       expect(LeanKitKanban::Card).to receive(:history).with(@board_id, @card_id).and_return(@card_history)
       expect(@files_and_json).to receive(:to_file).with(@card_history, "#{@location}/#{@board_name}/#{@card_id}_history.json")
-      board_locations = @download_board.download_board(@location, @email, @password, @account, @board_name)
 
-      expect(board_locations).to eq ["#{@location}/#{@board_name}"]
+      board_location = @download_board.download_board(@location, @email, @password, @account, @board_name)
+
+      expect(board_location).to eq "#{@location}/#{@board_name}"
     end
 
     it "doesn't downloads the history of a new card because there are no changes regarding that card" do
@@ -139,61 +140,90 @@ describe LeankitDownload::DownloadBoard do
       go_back
     end
 
-    it "downloads the history of the cards for the boards in config file" do
-      add_boards_to_config_file("Devops", "portfolio")
-      add_login_credentials_to_config_file
-      mock_leankit_all_board
-      mock_leankit_board_find(12780) # Devops
-      mock_leankit_board_find(46517) # portfolio
-      mock_leankit_archive_fetch(12780)
-      mock_leankit_archive_fetch(46517)
-      mock_leankit_card_find(12780, 10795) # backlog
-      mock_leankit_card_find(12780, 10831)
-      mock_leankit_card_find(12780, 10843) # archive
-      mock_leankit_card_find(46517, 10566)
-      mock_leankit_card_find(46517, 37655)
-      mock_leankit_card_find(46517, 20857)
-      mock_leankit_card_history(12780, 10795)
-      mock_leankit_card_history(46517, 10566)
-      mock_leankit_card_history(46517, 37655)
-      mock_leankit_card_history(46517, 20857)
-      mock_leankit_card_history(12780, 10831) # backlog
-      mock_leankit_card_history(12780, 10843) # archive
+    describe("command line") do
+      it "downloads the history of the cards for the boards in config file" do
+        add_boards_to_config_file("Devops", "portfolio")
+        add_login_credentials_to_config_file
+        mock_leankit_all_board
+        mock_leankit_board_find(12780) # Devops
+        mock_leankit_board_find(46517) # portfolio
+        mock_leankit_archive_fetch(12780)
+        mock_leankit_archive_fetch(46517)
+        mock_leankit_card_find(12780, 10795) # backlog
+        mock_leankit_card_find(12780, 10831)
+        mock_leankit_card_find(12780, 10843) # archive
+        mock_leankit_card_find(46517, 10566)
+        mock_leankit_card_find(46517, 37655)
+        mock_leankit_card_find(46517, 20857)
+        mock_leankit_card_history(12780, 10795)
+        mock_leankit_card_history(46517, 10566)
+        mock_leankit_card_history(46517, 37655)
+        mock_leankit_card_history(46517, 20857)
+        mock_leankit_card_history(12780, 10831) # backlog
+        mock_leankit_card_history(12780, 10843) # archive
 
-      run_app
+        run_app(["boards.json", "leankit_dump"])
 
-      all_boards_json_has_been_downloaded
-      card_info_has_been_downloaded("Devops", 12780, 10795)
-      card_info_has_been_downloaded("Devops", 12780, 10831)
-      card_info_has_been_downloaded("Devops", 12780, 10843)
-      card_info_has_been_downloaded("portfolio", 46517, 10566)
-      card_info_has_been_downloaded("portfolio", 46517, 10566)
-      card_info_has_been_downloaded("portfolio", 46517, 20857)
-      card_history_has_been_downloaded("Devops", 10795)
-      card_history_has_been_downloaded("Devops", 10831)
-      card_history_has_been_downloaded("Devops", 10843)
-      card_history_has_been_downloaded("portfolio", 10566)
-      card_history_has_been_downloaded("portfolio", 10566)
-      card_history_has_been_downloaded("portfolio", 20857)
+        all_boards_json_has_been_downloaded
+        card_info_has_been_downloaded("Devops", 12780, 10795)
+        card_info_has_been_downloaded("Devops", 12780, 10831)
+        card_info_has_been_downloaded("Devops", 12780, 10843)
+        card_info_has_been_downloaded("portfolio", 46517, 10566)
+        card_info_has_been_downloaded("portfolio", 46517, 10566)
+        card_info_has_been_downloaded("portfolio", 46517, 20857)
+        card_history_has_been_downloaded("Devops", 10795)
+        card_history_has_been_downloaded("Devops", 10831)
+        card_history_has_been_downloaded("Devops", 10843)
+        card_history_has_been_downloaded("portfolio", 10566)
+        card_history_has_been_downloaded("portfolio", 10566)
+        card_history_has_been_downloaded("portfolio", 20857)
+      end
+
+      it "does not download the history of the card because it has not changed" do
+        add_boards_to_config_file("Devops")
+        add_login_credentials_to_config_file
+        mock_leankit_all_board
+        mock_leankit_board_find(12780) # sandbox
+        mock_leankit_archive_fetch(12780)
+        should_not_call_leankit_card_find(12780, 10795) # backlog
+        should_not_call_leankit_card_find(12780, 10831)
+        should_not_call_leankit_card_find(12780, 10843) # archive
+        should_not_call_leankit_card_history(12780, 10831)
+        should_not_call_leankit_card_history(12780, 10795) # backlog
+        should_not_call_leankit_card_history(12780, 10843) # archive
+        copy_card_files("Devops", 12780, 10831)
+        copy_card_files("Devops", 12780, 10795)
+        copy_card_files("Devops", 12780, 10843)
+
+        run_app(["boards.json", "leankit_dump"])
+      end
+
+      it "does not connect to leankit if --dry-run is specified" do
+        add_boards_to_config_file("Devops")
+        add_login_credentials_to_config_file
+        fail_when_leankit_is_connected
+
+        copy_card_files("Devops", 12780, 10831)
+        copy_card_files("Devops", 12780, 10795)
+        copy_card_files("Devops", 12780, 10843)
+
+        run_app(["--dry-run", "boards.json", "leankit_dump"])
+      end
     end
 
-    it "does not download the history of the card because it has not changed" do
-      add_boards_to_config_file("Devops")
-      add_login_credentials_to_config_file
-      mock_leankit_all_board
-      mock_leankit_board_find(12780) # sandbox
-      mock_leankit_archive_fetch(12780)
-      should_not_call_leankit_card_find(12780, 10795) # backlog
-      should_not_call_leankit_card_find(12780, 10831)
-      should_not_call_leankit_card_find(12780, 10843) # archive
-      should_not_call_leankit_card_history(12780, 10831)
-      should_not_call_leankit_card_history(12780, 10795) # backlog
-      should_not_call_leankit_card_history(12780, 10843) # archive
-      copy_card_files("Devops", 12780, 10831)
-      copy_card_files("Devops", 12780, 10795)
-      copy_card_files("Devops", 12780, 10843)
+    describe("library") do
+      it "returns the location of the boards which has been dumped and appears in the boards.json" do
+        add_boards_to_config_file("Devops", "portfolio")
+        add_login_credentials_to_config_file
+        fail_when_leankit_is_connected
 
-      run_app
+        copy_card_files("Devops", 12780, 10831)
+        copy_card_files("Devops", 12780, 10795)
+        copy_card_files("Devops", 12780, 10843)
+
+        board_locations = LeankitDownload::DownloadBoard.create.download("boards.json", "leankit_dump", true)
+        expect(board_locations).to eq [File.join("leankit_dump", "Devops")]
+      end
     end
   end
 end

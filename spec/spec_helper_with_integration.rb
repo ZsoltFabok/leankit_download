@@ -60,6 +60,14 @@ def mock_leankit_card_history(board_id, card_id)
 	expect(LeanKitKanban::Card).to receive(:history).with(board_id, card_id).and_return(response)
 end
 
+def fail_when_leankit_is_connected
+	expect(LeanKitKanban::Board).not_to receive(:find)
+	expect(LeanKitKanban::Board).not_to receive(:all)
+	expect(LeanKitKanban::Archive).not_to receive(:fetch)
+	expect(LeanKitKanban::Card).not_to receive(:find)
+	expect(LeanKitKanban::Card).not_to receive(:history)
+end
+
 def should_not_call_leankit_card_find(board_id, card_id)
 	expect(LeanKitKanban::Card).not_to receive(:find).with(board_id, card_id)
 end
@@ -91,8 +99,8 @@ def add_board_column_mapping_to_config_file(board_name, mapping)
 	File.open("boards.json", "w") {|f| f.write(JSON.pretty_generate({:boards => {board_name => mapping}}))}
 end
 
-def run_app
-	LeankitDownload::Cli.run(["boards.json", "leankit_dump"])
+def run_app(argv)
+	LeankitDownload::Cli.run(argv)
 end
 
 def read_file(file_name)
