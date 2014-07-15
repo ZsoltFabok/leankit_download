@@ -8,12 +8,12 @@ require 'leankit_download/version'
 Gem::Specification.new do |s|
   s.name        = 'leankit_download'
   s.version     = LeankitDownload::VERSION
-  s.date        = '2014-01-15'
+  s.date        = '2014-07-15'
   s.summary     = "leankit_download-#{s.version}"
-  s.description = "downloads data from leankit"
+  s.description = "Downloads card history data from leankit"
   s.authors     = ["Zsolt Fabok"]
   s.email       = 'me@zsoltfabok.com'
-  s.homepage    = ''
+  s.homepage    = 'https://github.com/ZsoltFabok/leankit_download'
   s.license     = 'BSD'
 
   s.files         = `git ls-files`.split("\n").reject {|path| path =~ /\.gitignore$/ || path =~ /file$/ }

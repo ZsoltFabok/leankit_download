@@ -5,6 +5,9 @@ module LeankitDownload
       @files_and_json = files_and_json
     end
 
+    ##
+    # Downloads the history of cards provided in the json configuration file and returns
+    # the paths to the location where they are stored.
     def download(boards_json, destination, dry_run=false)
       content = @files_and_json.from_file(boards_json)
       email = content["leankit"]["email"]
@@ -73,6 +76,7 @@ module LeankitDownload
       return nil
     end
 
+    private
     def get_card_ids(board_id)
       board = LeanKitKanban::Board.find(board_id)[0]
       archive = LeanKitKanban::Archive.fetch(board_id)[0][0]
